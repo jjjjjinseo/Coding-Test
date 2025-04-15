@@ -2,7 +2,7 @@ import java.io.*;
 import java.util.*;
 
 public class B_2667_단지번호붙이기 {
-    static int total;
+    static int total, house;
     static int N ;
     static int [][] map;
     static int [] di ={-1,1,0,0};
@@ -27,8 +27,10 @@ public class B_2667_단지번호붙이기 {
         for(int i=0; i<N; i++){
             for(int j=0; j<N; j++){
                 if(!visit[i][j] && map[i][j]==1){
-                    int houses = bfs(i, j, visit);
-                    result.add(houses);
+                    house = 0;
+                    dfs(i, j, visit);
+                    total++;
+                    result.add(house);
                 }
             }
 
@@ -40,29 +42,20 @@ public class B_2667_단지번호붙이기 {
         }
 
     }
-    public static int bfs(int startI, int startJ, boolean [][] visit){
-        Queue <int[]> que = new LinkedList<>();
-        que.add(new int [] { startI, startJ});
-        visit[startI][startJ]  = true;
-        int house = 1;
-        while(!que.isEmpty()){
-            int [] peek = que.poll();
-            int peekI = peek[0];
-            int peekJ = peek[1];
 
-            for(int i=0; i<4; i++){
-                int newI = peekI+di[i];
-                int newJ = peekJ+dj[i];
-                if(newI>=0 && newJ>=0 && newI<N && newJ <N){
-                    if(!visit[newI][newJ] && map[newI][newJ]==1){
-                        visit[newI][newJ] = true;
-                        house ++;
-                        que.add(new int []{newI, newJ});
-                    }
+    public static void dfs(int i, int j, boolean [][] visit){
+        visit[i][j] = true;
+        house ++;
+        for(int k=0; k<4; k++) {
+            int newI = i + di[k];
+            int newJ = j + dj[k];
+            if (newI >= 0 && newJ >= 0 && newI < N && newJ < N) {
+                if (!visit[newI][newJ] && map[newI][newJ] == 1) {
+                    dfs(newI, newJ, visit);
                 }
             }
         }
-        total ++;
-        return house;
     }
+
 }
+
