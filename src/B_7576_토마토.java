@@ -27,7 +27,7 @@ public class B_7576_토마토 {
             for(int j=0; j<M; j++){
                 box[i][j] = Integer.parseInt(st.nextToken());
                 if(box[i][j]==1){
-                    oCnt++;
+                    // 익은 토마토 위치 (i,j) & 날짜
                     que.add(new int[]{i,j,0});
                 }
                 else if(box[i][j]==-1){
@@ -35,52 +35,43 @@ public class B_7576_토마토 {
                 }
             }
         }
+        //담길 때부터 다 익어있을 때
         if(oCnt==N*M-eCnt){
             answer = 0;
             System.out.println(answer);
             return;
         }
 
-        boolean [][] visit = new boolean [N][M];
-        for(int i=0; i<N; i++){
-            Arrays.fill(visit[i], false);
-        }
-        cnt = que.size();
-        bfs(que, visit);
+        cnt = oCnt;
+        bfs(que);
 
+        //모두 익을 수 없을 때
         if(cnt != M*N-eCnt){
             answer = -1;
         }
         System.out.println(answer);
 
     }
-    public static void bfs(Queue<int[]> que , boolean [][] visit){
-
-        int preLevel = 0;
-
+    public static void bfs(Queue<int[]> que){
+        int day = 0;
         while(!que.isEmpty()){
 
             int [] peek = que.poll();
-            visit[peek[0]][peek[1]] = true;
-
-            if(peek[2]!=preLevel){
-                answer ++;
-                preLevel = peek[2];
-            }
+            day = peek[2];
 
             for(int i=0; i<4; i++){
                 int newX = peek[0] + dx[i];
                 int newY = peek[1] + dy[i];
 
                 if(newX>=0 && newY>=0 && newX<N && newY<M){
-                    if(!visit[newX][newY] && box[newX][newY]==0){
+                    if(box[newX][newY]==0){
                         cnt ++;
                         box[newX][newY] = 1;
-                        visit[newX][newY] = true;
                         que.add(new int []{newX, newY, peek[2]+1});
                     }
                 }
             }
         }
+        answer = day;
     }
 }
