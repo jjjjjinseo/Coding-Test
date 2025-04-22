@@ -3,18 +3,18 @@ import java.io.*;
 import java.util.*;
 
 public class B_2644_촌수계산 {
+
     static int N;
-    static int answer;
-    static int parent;
-    static StringBuilder sb, sb1, sb2;
+    static int first, last, answer;
     static ArrayList<ArrayList<Integer>> graph = new ArrayList<>();
+
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         N = Integer.parseInt(br.readLine());
         StringTokenizer st = new StringTokenizer(br.readLine());
 
-        int first = Integer.parseInt(st.nextToken());
-        int last = Integer.parseInt(st.nextToken());
+        first = Integer.parseInt(st.nextToken());
+        last = Integer.parseInt(st.nextToken());
 
         int M = Integer.parseInt(br.readLine());
         for(int i=0; i<=N; i++){
@@ -25,80 +25,37 @@ public class B_2644_촌수계산 {
             int parent = Integer.parseInt(st.nextToken());
             int child = Integer.parseInt(st.nextToken());
 
+            //촌수는 방향이 없음.
             graph.get(parent).add(child);
-        }
-        sb = new StringBuilder();
-        sb.append(first).append(" ");
-        dfs(first);
-        sb1 = sb;
-
-        sb = new StringBuilder();
-        sb.append(last).append(" ");
-        dfs(last);
-        sb2 = sb;
-
-        String [] tmp1 = sb1.toString().split(" ");
-        String [] tmp2 = sb2.toString().split(" ");
-
-        boolean sig = false;
-        for (String s : tmp1) {
-            if(!sig){
-                for (String s2 : tmp2) {
-                    if (Integer.parseInt(s) == Integer.parseInt(s2)) {
-                        parent = Integer.parseInt(s2);
-                        sig = true;
-                        break;
-                    }
-                }
-            }
+            graph.get(child).add(parent);
         }
 
-        if(parent == 0){
-            System.out.println(-1);
-            return;
-        }
-        bfs(parent, first, last);
+        boolean [] visit = new boolean [N+1];
+        Arrays.fill(visit, false);
 
+        visit[first] = true;
+        dfs(first,0, visit);
+
+        if(answer == 0 ){
+            answer = -1;
+        }
         System.out.println(answer);
 
     }
-    public static void dfs(int me){
-        for(int i=1; i<=N; i++){
-            for(int j=0; j<graph.get(i).size(); j++){
-                if(graph.get(i).get(j)==me){
-
-                    //부모를 찾음
-                    sb.append(i).append(" ");
-                    dfs(i);
-                }
+    public static void dfs(int start, int level, boolean [] visit){
+        if(start == last){
+            answer += level;
+            return;
+        }
+        for(int i=0; i<graph.get(start).size(); i++){
+            if(!visit[graph.get(start).get(i)]){
+                visit[graph.get(start).get(i)] = true;
+                //재귀
+                dfs(graph.get(start).get(i), level+1, visit);
             }
         }
     }
 
-    public static void bfs(int parent, int first, int last){
-        Queue<int []> que = new LinkedList<>();
-        int cnt = 0;
-        que.add(new int []{ parent, 0 });
-
-        if(parent == first || parent == last){
-            cnt ++;
-        }
-
-        while(!que.isEmpty()){
-            int [] peek = que.poll();
-
-            for(int i=0; i<graph.get(peek[0]).size(); i++){
-                if(graph.get(peek[0]).get(i) == first || graph.get(peek[0]).get(i) == last){
-                    cnt++;
-                    answer += peek[1]+1;
-                }
-                que.add(new int []{graph.get(peek[0]).get(i), peek[1]+1});
-            }
-            if(cnt == 2){
-                break;
-            }
-        }
-    }
 
 }
 
